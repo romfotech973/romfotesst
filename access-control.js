@@ -203,7 +203,12 @@ function saveStaffUser(event) {
     const value = document.getElementById('user-perm-'+key).value;
     if (value!=='inherit') permissions[key] = value==='allow';
   }
-  const updated = {...existing, username, name, role, active, permissions, password:password || existing.password};
+  const updated = {...existing, username, name, role, active, permissions};
+  if (typeof cloudToken==='function' && cloudToken()) {
+    // Hosted portal: the server hashes the new password; it is never stored here.
+    delete updated.password;
+    if (password) updated.newPassword = password;
+  } else updated.password = password || existing.password;
   updated.authVersion=(existing?.authVersion||0) + (existing && (password || role!==existing.role || active!== (existing.active!==false)) ? 1 : 0);
   const next = existing ? users.map(u=>u===existing?updated:u) : [...users,updated];
   if (!next.some(u=>u.role==='admin' && u.active!==false)) { alert('At least one active administrator is required.'); return; }

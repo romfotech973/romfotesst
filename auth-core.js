@@ -37,6 +37,7 @@ function endAuthSession() {
   }
   sessionStorage.removeItem(SESSION_KEY);sessionStorage.removeItem(PENDING_LOGIN_KEY);
   localStorage.removeItem(SESSION_KEY);
+  if(typeof setCloudToken==='function')setCloudToken('');
 }
     const ROLES = {
       sales: { label: "Sales Department", defaultUser: "Arjun", badge: "badge-brand" },
@@ -61,7 +62,7 @@ function endAuthSession() {
         const s = localStorage.getItem(USERS_KEY);
         if (s) {
           const arr = JSON.parse(s);
-          if (Array.isArray(arr)) return migrateAdminAccount(arr).filter(u => u && typeof u.username === 'string' && typeof u.password === 'string' && ROLES[u.role]);
+          if (Array.isArray(arr)) return migrateAdminAccount(arr).filter(u => u && typeof u.username === 'string' && ROLES[u.role]);
           return [];
         }
       } catch (e) { return []; }

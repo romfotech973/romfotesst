@@ -19,11 +19,17 @@ function initSignIn(mode='login') {
 function signInMessage(text){document.getElementById('signin-message').textContent=text;}
 async function submitRegistration(event){
   event.preventDefault();
-  try{ await cloudPull(); }catch(_){}
   const name=document.getElementById('register-name').value.trim(),username=document.getElementById('login-username').value.trim().toLowerCase(),role=document.getElementById('login-role').value,password=document.getElementById('login-password').value;
   if(!name || !['sales','ops','accounts'].includes(role) || !/^[a-z0-9_.-]{2,50}$/.test(username)){signInMessage('Enter your full name, a valid username and department.');return;}
   if(password.length<8){signInMessage('Use at least 8 characters for your password.');return;}
   if(password!==document.getElementById('register-confirm').value){signInMessage('Passwords do not match. Please re-enter them.');return;}
+  const cloud=await cloudAuth({action:'register',name,username,role,password});
+  if(cloud.status){
+    if(!cloud.ok){signInMessage(cloud.data.error||'Registration failed. Please try again.');return;}
+    initSignIn('login');document.getElementById('login-username').value=username;
+    signInMessage('Registration saved. Your account is awaiting admin approval. Once approved, log in with your username and password.');return;
+  }
+  // No cloud API (local copy of the portal): keep the account in this browser only.
   const users=loadUsers();if(users.some(u=>u.username.toLowerCase()===username)){signInMessage('That username already exists. Choose another username or log in.');return;}
   users.push({username,name,role,password,active:true,approvalStatus:'pending',registeredAt:Date.now(),authVersion:0,permissions:{}});
   if(!saveUsers(users))return;
@@ -32,8 +38,17 @@ async function submitRegistration(event){
 }
 async function submitSignIn(event){
   event.preventDefault();
-  try{ await cloudPull(); }catch(_){}
   const username=document.getElementById('login-username').value.trim().toLowerCase(),password=document.getElementById('login-password').value;
+  const cloud=await cloudAuth({action:'login',username,password});
+  if(cloud.status){
+    if(!cloud.ok || !cloud.data.token){signInMessage(cloud.data.error||'Login failed. Please try again.');return;}
+    endAuthSession();setCloudToken(cloud.data.token);
+    await cloudPull();
+    const signedIn=loadUsers().find(u=>u.username.toLowerCase()===username) || cloud.data.user;
+    if(createAuthSession(signedIn,{id:null,expiresAt:cloud.data.expiresAt}))completeSignIn(signedIn);
+    return;
+  }
+  // No cloud API (local copy of the portal): check this browser's accounts.
   const user=loadUsers().find(u=>u.username.toLowerCase()===username);
   if(!user || user.password!==password){signInMessage('Incorrect username or password.');return;}
   if(user.active===false){signInMessage('Your account is disabled. Contact your administrator.');return;}

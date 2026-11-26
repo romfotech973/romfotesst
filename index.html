@@ -1237,6 +1237,7 @@
         localStorage.setItem(DB_KEY,JSON.stringify(normalizeDatabase(null)));
         localStorage.setItem(USERS_KEY,JSON.stringify([{...admin,active:true,permissions:{},authVersion:(admin.authVersion||0)+1}]));
         localStorage.removeItem(LOGIN_REQUESTS_KEY);
+        cloudPush(['db','users','requests']);
       } catch(error) {
         keys.forEach((key,i)=>{if(previous[i]===null)localStorage.removeItem(key);else localStorage.setItem(key,previous[i]);});
         alert('Reset failed. Existing records were restored.');return;
