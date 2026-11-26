@@ -1,0 +1,39 @@
+/* Keep wide data tables scrollable inside the viewport, rather than widening it. */
+#app-shell, .main-wrap, .sec-card, .sec-body, .tbl-wrapper { min-width:0; }
+.tbl-wrapper { max-width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+@media screen and (max-width:768px) {
+  .navbar {position:relative; padding:12px; flex-wrap:wrap; gap:10px;}
+  .navbar-brand {gap:10px; min-width:0; flex-wrap:wrap;}
+  .navbar-logo {height:30px;max-width:120px;}
+  .navbar-user {width:100%;gap:8px;flex-wrap:wrap;}
+  .user-tag {flex:1 1 160px;min-width:0;}
+  #nav-user-name {overflow-wrap:anywhere;}
+  .tabbar {padding:0 8px;max-width:100%;flex-shrink:0;}
+  .tab-btn {flex-shrink:0;min-height:48px;padding:12px;}
+  .main-wrap {padding:14px 12px calc(100px + env(safe-area-inset-bottom));gap:16px;}
+  .form-grid-2,.form-grid-3,.form-grid-4,.form-grid-5,.svc-grid,#dmc-inputs-wrapper {grid-template-columns:minmax(0,1fr) !important;}
+  .form-group {min-width:0;}
+  .form-control,input,select,textarea {font-size:16px;max-width:100%;min-width:0;}
+  input:not([type=checkbox]):not([type=hidden]),select,.btn {min-height:44px;}
+  input[type=checkbox] {width:20px;height:20px;}
+  .stats-row {grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px;}
+  .stat-card {padding:12px;min-width:0;overflow-wrap:anywhere;}
+  .stat-card b {font-size:21px !important;}
+  .sec-head,.sec-body {padding:14px !important;}
+  .sec-head,.actionbar,.actionbar-tools {flex-wrap:wrap;gap:10px;min-width:0;}
+  .actionbar-title {font-size:18px;flex-wrap:wrap;overflow-wrap:anywhere;}
+  .actionbar-tools {width:100%;}
+  .actionbar-tools input {width:100% !important;}
+  .sec-title {min-width:0;overflow-wrap:anywhere;}
+  #bf-paxnames-group > label {align-items:flex-start !important;flex-wrap:wrap;}
+  .bf-pax-row .bf-pax-name {flex:1;width:0;min-width:0;}
+  .bf-pax-row button {flex-shrink:0;min-width:44px;}
+  button[onclick^="attemptBackToList"] {left:10px !important;bottom:calc(10px + env(safe-area-inset-bottom)) !important;width:calc(40% - 15px);padding:10px 6px !important;font-size:12px !important;}
+  button[onclick^="saveBookingChanges"] {right:10px !important;bottom:calc(10px + env(safe-area-inset-bottom)) !important;width:calc(60% - 15px);padding:10px 6px !important;font-size:12px !important;justify-content:center;}
+  #toast {max-width:calc(100vw - 24px);left:12px;right:12px;bottom:80px;overflow-wrap:anywhere;}
+  #discard-save-modal > div {max-height:85dvh;overflow-y:auto;}
+  .login-box {max-width:100%;padding:24px;}
+  #login-page {padding:16px;}
+  .ta-pop {max-width:calc(100vw - 24px);max-height:35dvh;overflow:auto;}
+}
+@media screen and (max-width:360px) {.stats-row {grid-template-columns:minmax(0,1fr);}}

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in | Romford Holidays</title>
+  <link rel="stylesheet" href="signin.css">
+  <script>if(location.protocol==='file:') location.replace('index.html#signin');</script>
+</head>
+<body>
+  <main id="login-page"><div id="signin-root" class="login-box"></div></main>
+  <noscript>Enable JavaScript to sign in to the Romford office portal.</noscript>
+  <script src="logo_data.js"></script>
+  <script src="cloud-sync.js"></script>
+  <script src="auth-core.js"></script>
+  <script src="signin.js"></script>
+  <script>(async function(){ if(location.protocol!=='file:'){ try{ await cloudPull(); }catch(_){} cloudInit(); } initSignIn(); })();</script>
+</body>
+</html>

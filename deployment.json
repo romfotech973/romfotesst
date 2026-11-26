@@ -1,0 +1,12 @@
+{
+  "projectName": "romford-office-portal",
+  "projectId": "prj_vNBpuV2DwaiuSb1xAJFB39IERt4c",
+  "teamId": "team_1yDAPhxBLhXRE8QnHH9kPj2l",
+  "deploymentId": "dpl_HtxNJXaEWTYNCtxiTKmCdy23n47w",
+  "url": "https://romford-office-portal.vercel.app",
+  "target": "production",
+  "status": "READY",
+  "source": "Direct source-file upload; no Git repository linked",
+  "packageCommand": "python tools/build_hosted.py",
+  "verificationCommand": "python tests/test_mobile.py https://romford-office-portal.vercel.app"
+}
