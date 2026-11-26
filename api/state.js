@@ -14,10 +14,15 @@ const KEY_USERS = "romford_cloud_users";
 const KEY_REQUESTS = "romford_cloud_requests";
 const KEY_UPDATED = "romford_cloud_updated_at";
 
+// Trim spaces and stray quotes that sometimes get pasted into env var values.
+function cleanEnv(value) {
+  return value ? String(value).trim().replace(/^["']+|["']+$/g, "").replace(/\/+$/, "") : value;
+}
+
 function storeConfig() {
   return {
-    url: process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL,
-    token: process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN
+    url: cleanEnv(process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL),
+    token: cleanEnv(process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN)
   };
 }
 
@@ -35,13 +40,21 @@ async function redisSet(key, value) {
   await fetch(`${url}/set/${key}`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ value: JSON.stringify(value) })
+    // Upstash stores the raw request body as the value.
+    body: JSON.stringify(value)
   });
 }
 
 function parseMaybe(raw) {
   if (raw == null) return null;
-  try { return JSON.parse(raw); } catch (_) { return null; }
+  let v;
+  try { v = JSON.parse(raw); } catch (_) { return null; }
+  // Older saves wrapped the data as {"value": "<json>"}; unwrap those.
+  if (v && typeof v === "object" && !Array.isArray(v) && Object.keys(v).length === 1 && "value" in v) {
+    v = v.value;
+    if (typeof v === "string") { try { v = JSON.parse(v); } catch (_) {} }
+  }
+  return v;
 }
 
 export default async function handler(req, res) {
@@ -64,7 +77,7 @@ export default async function handler(req, res) {
         db: parseMaybe(db),
         users: parseMaybe(users),
         requests: parseMaybe(requests),
-        updatedAt: updated ? Number(updated) : 0
+        updatedAt: Number(parseMaybe(updated)) || 0
       });
     }
 
